@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ec.edu.utpl.app.gstnmedicos.models.dao.IEspecialidadDao;
 import ec.edu.utpl.app.gstnmedicos.models.entity.Especialidad;
@@ -15,27 +16,31 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
 	private IEspecialidadDao especialidadRepo;
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Especialidad> listAll() {
 		// TODO Auto-generated method stub
-		return especialidadRepo.findAll();
+		return (List<Especialidad>) especialidadRepo.findAll();
 	}
 
 	@Override
-	public void saveEspecialidad(Especialidad especialidad) {
-		especialidadRepo.save(especialidad);
-
+	@Transactional
+	public Especialidad save(Especialidad especialidad) {
+		// TODO Auto-generated method stub
+		return especialidadRepo.save(especialidad);
 	}
 
 	@Override
-	public Especialidad EspecialidadbyId(Long id) {
+	@Transactional(readOnly = true)
+	public Especialidad findById(Long id) {
 		// TODO Auto-generated method stub
 		return especialidadRepo.findById(id).orElse(null);
 	}
 
 	@Override
-	public void deleteEspecialidad(Long id) {
+	@Transactional
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
 		especialidadRepo.deleteById(id);
-
 	}
 
 }

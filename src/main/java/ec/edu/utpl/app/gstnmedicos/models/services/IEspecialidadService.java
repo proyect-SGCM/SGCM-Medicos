@@ -8,10 +8,10 @@ public interface IEspecialidadService {
 
 	public List<Especialidad> listAll();
 
-	public void saveEspecialidad(Especialidad especialidad);
+	public Especialidad save(Especialidad especialidad);
 
-	public Especialidad EspecialidadbyId(Long id);
+	public Especialidad findById(Long id);
 
-	public void deleteEspecialidad(Long id);
+	public void delete(Long id);
 
 }

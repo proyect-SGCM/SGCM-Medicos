@@ -8,9 +8,9 @@ public interface IMedicoService {
 
 	public List<Medico> listAll();
 
-	public void save(Medico medico);
+	public Medico save(Medico medico);
 
-	public Medico get(Long id);
+	public Medico findById(Long id);
 
 	public void delete(Long id);
 }

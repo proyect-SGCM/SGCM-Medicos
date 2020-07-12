@@ -1,84 +1,79 @@
 package ec.edu.utpl.app.gstnmedicos.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import ec.edu.utpl.app.gstnmedicos.models.entity.Medico;
-import ec.edu.utpl.app.gstnmedicos.models.services.MedicoServiceImpl;
+import ec.edu.utpl.app.gstnmedicos.models.services.IMedicoService;
 
-@Controller
+@CrossOrigin(origins = { "http://localhost:4200" })
+@RestController
+@RequestMapping("/gst_medico")
 public class MedicoController {
 
 	@Autowired
-	private MedicoServiceImpl medicoService;
+	private IMedicoService medicoService;
 
 	/* -------------- Crear Médico -------------- */
 
-	@RequestMapping("/crear_medico")
-	public String crearPersonal(Model model) {
-		Medico medico = new Medico();
-		model.addAttribute("medico", medico);
+	@PostMapping("/crear_medico")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Medico crearMedico(@RequestBody Medico medico) {
 
-		return "medico/crear_medico";
+		return medicoService.save(medico);
 	}
 
 	/* -------------- Listar Médico -------------- */
 
-	@RequestMapping("/listar_medico")
-	public String listarPersonal(Model model) {
-		List<Medico> listMedico = medicoService.listAll();
-		model.addAttribute("listMedico", listMedico);
+	@GetMapping("/listar_medico")
+	public List<Medico> listarMedico() {
 
-		return "medico/listar_medico";
+		return medicoService.listAll();
 	}
 
-	/* -------------- Guardar Médico -------------- */
+	/* -------------- Ver Medico -------------- */
 
-	@RequestMapping(value = "/guardar_medico", method = RequestMethod.POST)
-	public String guardarMedico(@ModelAttribute("medico") Medico medico) {
+	@GetMapping("/medico/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public Medico verMedico(@PathVariable Long id) {
 
-		medicoService.save(medico);
-		return "redirect:/medico/listar_medico";
+		return medicoService.findById(id);
 	}
 
 	/* -------------- Editar Médico -------------- */
 
-	@RequestMapping(value = "/editar_medico/{id_medico}")
-	public String editarMedico(@PathVariable(value = "id_medico") long id_medico, Map<String, Object> model) {
+	@PutMapping("/medico/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Medico editarMedico(@RequestBody Medico medico, @PathVariable Long id) {
 
-		Medico medico = null;
+		Medico medicoActual = medicoService.findById(id);
 
-		if (id_medico > 0) {
-			medico = medicoService.get(id_medico);
-			if (medico == null) {
-				return "redirect:/personal//listar_personal";
-			}
-		} else {
-			return "redirect:/personal/listar_personal";
-		}
+		medicoActual.setNombre(medico.getNombre());
+		medicoActual.setApellido(medico.getApellido());
+		medicoActual.setNro_consultorio(medico.getNro_consultorio());
 
-		model.put("medico", medico);
-
-		return "medico/editar_medico";
+		return medicoService.save(medicoActual);
 	}
 
 	/* -------------- Eliminar Médico -------------- */
 
-	@RequestMapping("/eliminar_medico/{id_medico}")
-	public String eliminarMedico(@PathVariable(name = "id_medico") long id_medico) {
+	@DeleteMapping("/medico/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void eliminarMedico(@PathVariable Long id) {
 
-		if (id_medico > 0) {
-			medicoService.delete(id_medico);
-		}
-		return "redirect:/medico/listar_medico";
+		medicoService.delete(id);
 	}
 
 }

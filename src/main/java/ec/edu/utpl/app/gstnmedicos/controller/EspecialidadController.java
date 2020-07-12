@@ -1,85 +1,78 @@
 package ec.edu.utpl.app.gstnmedicos.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import ec.edu.utpl.app.gstnmedicos.models.entity.Especialidad;
-import ec.edu.utpl.app.gstnmedicos.models.services.EspecialidadServiceImpl;
+import ec.edu.utpl.app.gstnmedicos.models.services.IEspecialidadService;
 
-@Controller
+@CrossOrigin(origins = { "http://localhost:4200" })
+@RestController
+@RequestMapping("/gst_especialidad")
 public class EspecialidadController {
 
 	@Autowired
-	private EspecialidadServiceImpl especialidadService;
+	private IEspecialidadService especialidadService;
 
 	/* -------------- Crear Especialidad -------------- */
 
-	@RequestMapping("/crear_especialidad")
-	public String crearEspecialidad(Model model) {
-		Especialidad especialidad = new Especialidad();
-		model.addAttribute("especialidad", especialidad);
+	@PostMapping("/crear_especialidad")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Especialidad crearEspecialidad(@RequestBody Especialidad especialidad) {
 
-		return "especialidad/crear_especialidad";
+		return especialidadService.save(especialidad);
 	}
 
-	/* -------------- Listar Especialidad -------------- */
+	/* -------------- Listar Especialidades -------------- */
 
-	@RequestMapping("/listar_especialidad")
-	public String listarEspecialidad(Model model) {
-		List<Especialidad> listEspecialidad = especialidadService.listAll();
-		model.addAttribute("listEspecialidad", listEspecialidad);
+	@GetMapping("/listar_especialidades")
+	public List<Especialidad> listarEspecialidad() {
 
-		return "especialidad/listar_especialidad";
+		return especialidadService.listAll();
 	}
 
-	/* -------------- Guardar Especialidad -------------- */
+	/* -------------- Ver Especialidad -------------- */
 
-	@RequestMapping(value = "/guardar_especialidad", method = RequestMethod.POST)
-	public String guardarEspecialidad(@ModelAttribute("especialidad") Especialidad especialidad) {
+	@GetMapping("/especialidad/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public Especialidad verEspecialidad(@PathVariable Long id) {
 
-		especialidadService.saveEspecialidad(especialidad);
-		return "redirect:/especialidad/listar_especialidad";
+		return especialidadService.findById(id);
 	}
 
 	/* -------------- Editar Especialidad -------------- */
 
-	@RequestMapping(value = "/editar_especialidad/{id_medico}")
-	public String editarEspecialidad(@PathVariable(value = "id_especialidad") long id_especialidad,
-			Map<String, Object> model) {
+	@PutMapping("/especialidad/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Especialidad editarEspecialidad(@RequestBody Especialidad especialidad, @PathVariable Long id) {
 
-		Especialidad especialidad = null;
+		Especialidad especialidadActual = especialidadService.findById(id);
 
-		if (id_especialidad > 0) {
-			especialidad = especialidadService.EspecialidadbyId(id_especialidad);
-			if (especialidad == null) {
-				return "redirect:/especialidad/listar_especialidad";
-			}
-		} else {
-			return "redirect:/especialidad/listar_especialidad";
-		}
+		especialidadActual.setCodigo(especialidad.getCodigo());
+		especialidadActual.setNombre(especialidad.getNombre());
 
-		model.put("especialidad", especialidad);
-
-		return "especialidad/editar_especialidad";
+		return especialidadService.save(especialidadActual);
 	}
 
 	/* -------------- Eliminar Especialidad -------------- */
 
-	@RequestMapping("/eliminar_especialidad/{id_medico}")
-	public String eliminarEspecialidad(@PathVariable(name = "id_especialidad") long id_especialidad) {
+	@DeleteMapping("/especialidad/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void eliminarEspecialidad(@PathVariable Long id) {
 
-		if (id_especialidad > 0) {
-			especialidadService.deleteEspecialidad(id_especialidad);
-		}
-		return "redirect:/especialidad/listar_especialidad";
+		especialidadService.delete(id);
 	}
 
 }
