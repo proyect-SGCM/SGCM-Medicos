@@ -1,9 +1,13 @@
 package ec.edu.utpl.app.gstnmedicos.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,10 +50,27 @@ public class MedicoController {
 	/* -------------- Ver Medico -------------- */
 
 	@GetMapping("/medico/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	public Medico verMedico(@PathVariable Long id) {
+	public ResponseEntity<?> verMedico(@PathVariable Long id) {
 
-		return medicoService.findById(id);
+		Medico medico = null;
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			medico = medicoService.findById(id);
+		} catch (DataAccessException e) {
+			response.put("mensaje",
+					"El Médico con el ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		if (medico == null) {
+			response.put("mensaje",
+					"El Médico con el ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<Medico>(medico, HttpStatus.OK);
 	}
 
 	/* -------------- Editar Médico -------------- */
