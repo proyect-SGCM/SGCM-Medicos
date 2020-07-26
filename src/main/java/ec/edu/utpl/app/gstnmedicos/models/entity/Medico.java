@@ -17,7 +17,10 @@ public class Medico implements Serializable {
 	private long id_medico;
 	private String nombre;
 	private String apellido;
+	private String username;
+	private String password;
 	private int nro_consultorio;
+	private Rol id_rol;
 
 	public Medico() {
 
@@ -47,12 +50,36 @@ public class Medico implements Serializable {
 		this.apellido = apellido;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public int getNro_consultorio() {
 		return nro_consultorio;
 	}
 
 	public void setNro_consultorio(int nro_consultorio) {
 		this.nro_consultorio = nro_consultorio;
+	}
+
+	public Rol getId_rol() {
+		return id_rol;
+	}
+
+	public void setId_rol(Rol id_rol) {
+		this.id_rol = id_rol;
 	}
 
 	private static final long serialVersionUID = 1L;

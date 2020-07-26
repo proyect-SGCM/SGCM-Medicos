@@ -84,6 +84,9 @@ public class MedicoController {
 		medicoActual.setNombre(medico.getNombre());
 		medicoActual.setApellido(medico.getApellido());
 		medicoActual.setNro_consultorio(medico.getNro_consultorio());
+		medicoActual.setUsername(medico.getUsername());
+		medicoActual.setPassword(medico.getPassword());
+		medicoActual.setId_rol(medico.getId_rol());
 
 		return medicoService.save(medicoActual);
 	}
