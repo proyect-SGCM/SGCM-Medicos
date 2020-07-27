@@ -20,7 +20,7 @@ public class Medico implements Serializable {
 	private String username;
 	private String password;
 	private int nro_consultorio;
-	private Rol id_rol;
+	private int id_rol;
 
 	public Medico() {
 
@@ -74,11 +74,11 @@ public class Medico implements Serializable {
 		this.nro_consultorio = nro_consultorio;
 	}
 
-	public Rol getId_rol() {
+	public int getId_rol() {
 		return id_rol;
 	}
 
-	public void setId_rol(Rol id_rol) {
+	public void setId_rol(int id_rol) {
 		this.id_rol = id_rol;
 	}
 
